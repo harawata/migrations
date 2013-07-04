@@ -1,0 +1,44 @@
+package org.apache.ibatis.migration.operations;
+
+import java.io.PrintStream;
+import java.io.Reader;
+
+import org.apache.ibatis.jdbc.ScriptRunner;
+import org.apache.ibatis.migration.ConnectionProvider;
+import org.apache.ibatis.migration.MigrationException;
+import org.apache.ibatis.migration.MigrationsLoader;
+import org.apache.ibatis.migration.options.DatabaseOperationOption;
+
+public final class BootstrapOperation extends DatabaseOperation {
+  private final boolean force;
+
+  public BootstrapOperation(boolean force) {
+    super();
+    this.force = force;
+  }
+
+  @Override
+  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, PrintStream printStream, DatabaseOperationOption option) {
+    try {
+      if (changelogExists(connectionProvider, option) && !force) {
+        printStream.println("For your safety, the bootstrap SQL script will only run before migrations are applied (i.e. before the changelog exists).  If you're certain, you can run it using the --force option.");
+      } else {
+        Reader bootstrapReader = migrationsLoader.getBootstrapReader();
+        if (bootstrapReader != null) {
+          printStream.println(horizontalLine("Applying: bootstrap.sql", 80));
+          ScriptRunner runner = getScriptRunner(connectionProvider, printStream, option);
+          try {
+            runner.runScript(bootstrapReader);
+          } finally {
+            runner.closeConnection();
+          }
+          printStream.println();
+        } else {
+          printStream.println("Error, could not run bootstrap.sql.  The file does not exist.");
+        }
+      }
+    } catch (Exception e) {
+      throw new MigrationException("Error running bootstrapper.  Cause: " + e, e);
+    }
+  }
+}

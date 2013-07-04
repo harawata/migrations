@@ -1,41 +1,39 @@
 package org.apache.ibatis.migration.commands;
 
-import org.apache.ibatis.migration.Change;
-import org.apache.ibatis.migration.options.SelectedOptions;
-
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class StatusCommand extends BaseCommand {
+import org.apache.ibatis.migration.Change;
+import org.apache.ibatis.migration.operations.StatusOperation;
+import org.apache.ibatis.migration.options.SelectedOptions;
+
+public final class StatusCommand extends BaseCommand {
+  private int applied;
+
+  private int pending;
+
+  private List<Change> changes;
+
   public StatusCommand(SelectedOptions options) {
     super(options);
   }
 
   public void execute(String... params) {
-    printStream.println("ID             Applied At          Description");
-    printStream.println(horizontalLine("", 80));
-    List<Change> merged = new ArrayList<Change>();
-    List<Change> migrations = getMigrations();
-    if (changelogExists()) {
-      List<Change> changelog = getChangelog();
-      for (Change change : migrations) {
-        int index = changelog.indexOf(change);
-        if (index > -1) {
-          merged.add(changelog.get(index));
-        } else {
-          merged.add(change);
-        }
-      }
-      Collections.sort(merged);
-    } else {
-      merged.addAll(migrations);
-    }
-    for (Change change : merged) {
-      printStream.println(change);
-    }
-    printStream.println();
+    StatusOperation operation = new StatusOperation();
+    operation.operate(getConnectionProvider(), getMigrationsLoader(), printStream, getDatabaseOperationOption());
+    applied = operation.getAppliedCount();
+    pending = operation.getPendingCount();
+    changes = operation.getCurrentStatus();
   }
 
+  public int getAppliedCount() {
+    return applied;
+  }
 
+  public int getPendingCount() {
+    return pending;
+  }
+
+  public List<Change> getCurrentStatus() {
+    return changes;
+  }
 }

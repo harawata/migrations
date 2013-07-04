@@ -18,7 +18,7 @@ public class MigrationReader extends Reader {
   private Reader target;
 
   public MigrationReader(Reader source, boolean undo, Properties properties) throws IOException {
-    final Properties variables = filterVariables(properties);
+    final Properties variables = filterVariables(properties == null ? new Properties() : properties);
     try {
       BufferedReader reader = new BufferedReader(source);
       StringBuilder doBuilder = new StringBuilder();
@@ -56,6 +56,7 @@ public class MigrationReader extends Reader {
   }
 
 
+  @SuppressWarnings("serial")
   private Properties filterVariables(final Properties properties) {
     final Set<String> KNOWN_PROPERTIES_TO_IGNORE = new HashSet<String>() {{
       addAll(Arrays.asList(
