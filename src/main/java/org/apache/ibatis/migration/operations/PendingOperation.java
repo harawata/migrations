@@ -15,23 +15,23 @@ import org.apache.ibatis.migration.options.DatabaseOperationOption;
 public final class PendingOperation extends DatabaseOperation {
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, PrintStream printStream, DatabaseOperationOption option) {
+  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       if (!changelogExists(connectionProvider, option)) {
         throw new MigrationException("Change log doesn't exist, no migrations applied.  Try running 'up' instead.");
       }
       List<Change> pending = getPendingChanges(connectionProvider, migrationsLoader, option);
-      printStream.println("WARNING: Running pending migrations out of order can create unexpected results.");
+      println(printStream, "WARNING: Running pending migrations out of order can create unexpected results.");
       for (Change change : pending) {
-        printStream.println(horizontalLine("Applying: " + change.getFilename(), 80));
-        ScriptRunner runner = getScriptRunner(connectionProvider, printStream, option);
+        println(printStream, horizontalLine("Applying: " + change.getFilename(), 80));
+        ScriptRunner runner = getScriptRunner(connectionProvider, option, printStream);
         try {
           runner.runScript(migrationsLoader.getScriptReader(change, false));
         } finally {
           runner.closeConnection();
         }
         insertChangelog(change, connectionProvider, option);
-        printStream.println();
+        println(printStream);
       }
     } catch (Exception e) {
       throw new MigrationException("Error executing command.  Cause: " + e, e);

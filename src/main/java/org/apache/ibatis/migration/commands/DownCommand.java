@@ -10,6 +10,6 @@ public final class DownCommand extends BaseCommand {
 
   public void execute(String... params) {
     DownOperation operation = new DownOperation(getStepCountParameter(1, params));
-    operation.operate(getConnectionProvider(), getMigrationsLoader(), printStream, getDatabaseOperationOption());
+    operation.operate(getConnectionProvider(), getMigrationsLoader(), getDatabaseOperationOption(), printStream);
   }
 }

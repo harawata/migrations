@@ -22,19 +22,19 @@ public final class DownOperation extends DatabaseOperation {
   }
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, PrintStream printStream, DatabaseOperationOption option) {
+  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       Change lastChange = getLastAppliedChange(connectionProvider, option);
       if (lastChange == null) {
-        printStream.println("Changelog exist, but no migration found.");
+        println(printStream, "Changelog exist, but no migration found.");
       } else {
         List<Change> migrations = migrationsLoader.getMigrations();
         Collections.reverse(migrations);
         int stepCount = 0;
         for (Change change : migrations) {
           if (change.getId().equals(lastChange.getId())) {
-            printStream.println(horizontalLine("Undoing: " + change.getFilename(), 80));
-            ScriptRunner runner = getScriptRunner(connectionProvider, printStream, option);
+            println(printStream, horizontalLine("Undoing: " + change.getFilename(), 80));
+            ScriptRunner runner = getScriptRunner(connectionProvider, option, printStream);
             try {
               runner.runScript(migrationsLoader.getScriptReader(change, true));
             } finally {
@@ -43,9 +43,9 @@ public final class DownOperation extends DatabaseOperation {
             if (changelogExists(connectionProvider, option)) {
               deleteChange(connectionProvider, change, option);
             } else {
-              printStream.println("Changelog doesn't exist. No further migrations will be undone (normal for the last migration).");
+              println(printStream, "Changelog doesn't exist. No further migrations will be undone (normal for the last migration).");
             }
-            printStream.println();
+            println(printStream);
             stepCount++;
             if (steps == null || stepCount > steps) {
               break;

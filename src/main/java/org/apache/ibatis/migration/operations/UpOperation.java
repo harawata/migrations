@@ -24,7 +24,7 @@ public final class UpOperation extends DatabaseOperation {
   }
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, PrintStream printStream, DatabaseOperationOption option) {
+  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       Change lastChange = null;
       if (changelogExists(connectionProvider, option)) {
@@ -35,15 +35,15 @@ public final class UpOperation extends DatabaseOperation {
       int stepCount = 0;
       for (Change change : migrations) {
         if (lastChange == null || change.getId().compareTo(lastChange.getId()) > 0) {
-          printStream.println(horizontalLine("Applying: " + change.getFilename(), 80));
-          ScriptRunner runner = getScriptRunner(connectionProvider, printStream, option);
+          println(printStream, horizontalLine("Applying: " + change.getFilename(), 80));
+          ScriptRunner runner = getScriptRunner(connectionProvider, option, printStream);
           try {
             runner.runScript(migrationsLoader.getScriptReader(change, false));
           } finally {
             runner.closeConnection();
           }
           insertChangelog(change, connectionProvider, option);
-          printStream.println();
+          println(printStream);
           stepCount++;
           if (steps != null && stepCount > steps) {
             break;

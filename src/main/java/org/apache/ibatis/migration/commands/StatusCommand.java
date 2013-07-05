@@ -19,7 +19,7 @@ public final class StatusCommand extends BaseCommand {
 
   public void execute(String... params) {
     StatusOperation operation = new StatusOperation();
-    operation.operate(getConnectionProvider(), getMigrationsLoader(), printStream, getDatabaseOperationOption());
+    operation.operate(getConnectionProvider(), getMigrationsLoader(), getDatabaseOperationOption(), printStream);
     applied = operation.getAppliedCount();
     pending = operation.getPendingCount();
     changes = operation.getCurrentStatus();

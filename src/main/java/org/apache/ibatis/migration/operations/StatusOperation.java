@@ -18,9 +18,9 @@ public final class StatusOperation extends DatabaseOperation {
   private List<Change> changes;
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, PrintStream printStream, DatabaseOperationOption option) {
-    printStream.println("ID             Applied At          Description");
-    printStream.println(horizontalLine("", 80));
+  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+    println(printStream, "ID             Applied At          Description");
+    println(printStream, horizontalLine("", 80));
     List<Change> merged = new ArrayList<Change>();
     List<Change> migrations = migrationsLoader.getMigrations();
     if (changelogExists(connectionProvider, option)) {
@@ -41,9 +41,9 @@ public final class StatusOperation extends DatabaseOperation {
       pending = migrations.size();
     }
     for (Change change : merged) {
-      printStream.println(change);
+      println(printStream, change.toString());
     }
-    printStream.println();
+    println(printStream);
   }
 
   public int getAppliedCount() {

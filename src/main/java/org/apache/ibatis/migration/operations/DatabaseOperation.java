@@ -19,7 +19,7 @@ import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
 public abstract class DatabaseOperation {
 
-  public abstract void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, PrintStream printStream, DatabaseOperationOption option);
+  public abstract void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream);
 
   protected void insertChangelog(Change change, ConnectionProvider connectionProvider, DatabaseOperationOption option) {
     SqlRunner runner = getSqlRunner(connectionProvider);
@@ -77,9 +77,9 @@ public abstract class DatabaseOperation {
     }
   }
 
-  protected ScriptRunner getScriptRunner(ConnectionProvider connectionProvider, PrintStream printStream, DatabaseOperationOption option) {
+  protected ScriptRunner getScriptRunner(ConnectionProvider connectionProvider, DatabaseOperationOption option, PrintStream printStream) {
     try {
-      PrintWriter outWriter = new PrintWriter(printStream);
+      PrintWriter outWriter = printStream == null ? null : new PrintWriter(printStream);
       ScriptRunner scriptRunner = new ScriptRunner(connectionProvider.getConnection());
       scriptRunner.setLogWriter(outWriter);
       scriptRunner.setErrorLogWriter(outWriter);
@@ -111,5 +111,17 @@ public abstract class DatabaseOperation {
 
   public static String generateAppliedTimeStampAsString() {
     return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.sql.Date(System.currentTimeMillis()));
+  }
+
+  protected void println(PrintStream printStream) {
+    if (printStream != null) {
+      printStream.println();
+    }
+  }
+
+  protected void println(PrintStream printStream, String text) {
+    if (printStream != null) {
+      printStream.println(text);
+    }
   }
 }

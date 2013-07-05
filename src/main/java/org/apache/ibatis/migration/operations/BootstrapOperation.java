@@ -18,23 +18,23 @@ public final class BootstrapOperation extends DatabaseOperation {
   }
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, PrintStream printStream, DatabaseOperationOption option) {
+  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       if (changelogExists(connectionProvider, option) && !force) {
-        printStream.println("For your safety, the bootstrap SQL script will only run before migrations are applied (i.e. before the changelog exists).  If you're certain, you can run it using the --force option.");
+        println(printStream, "For your safety, the bootstrap SQL script will only run before migrations are applied (i.e. before the changelog exists).  If you're certain, you can run it using the --force option.");
       } else {
         Reader bootstrapReader = migrationsLoader.getBootstrapReader();
         if (bootstrapReader != null) {
-          printStream.println(horizontalLine("Applying: bootstrap.sql", 80));
-          ScriptRunner runner = getScriptRunner(connectionProvider, printStream, option);
+          println(printStream, horizontalLine("Applying: bootstrap.sql", 80));
+          ScriptRunner runner = getScriptRunner(connectionProvider, option, printStream);
           try {
             runner.runScript(bootstrapReader);
           } finally {
             runner.closeConnection();
           }
-          printStream.println();
+          println(printStream);
         } else {
-          printStream.println("Error, could not run bootstrap.sql.  The file does not exist.");
+          println(printStream, "Error, could not run bootstrap.sql.  The file does not exist.");
         }
       }
     } catch (Exception e) {

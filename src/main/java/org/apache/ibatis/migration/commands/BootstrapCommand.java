@@ -10,6 +10,6 @@ public final class BootstrapCommand extends BaseCommand {
 
   public void execute(String... params) {
     BootstrapOperation operation = new BootstrapOperation(options.isForce());
-    operation.operate(getConnectionProvider(), getMigrationsLoader(), printStream, getDatabaseOperationOption());
+    operation.operate(getConnectionProvider(), getMigrationsLoader(), getDatabaseOperationOption(), printStream);
   }
 }

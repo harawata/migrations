@@ -22,27 +22,27 @@ public final class VersionOperation extends DatabaseOperation {
   }
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, PrintStream printStream, DatabaseOperationOption option) {
+  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     ensureVersionExists(migrationsLoader);
     Change change = getLastAppliedChange(connectionProvider, option);
     if (change == null || version.compareTo(change.getId()) > 0) {
-      printStream.println("Upgrading to: " + version);
+      println(printStream, "Upgrading to: " + version);
       UpOperation up = new UpOperation(1);
       while (!version.equals(change.getId())) {
-        up.operate(connectionProvider, migrationsLoader, printStream, option);
+        up.operate(connectionProvider, migrationsLoader, option, printStream);
         change = getLastAppliedChange(connectionProvider, option);
       }
     } else if (version.compareTo(change.getId()) < 0) {
-      printStream.println("Downgrading to: " + version);
+      println(printStream, "Downgrading to: " + version);
       DownOperation down = new DownOperation(1);
       while (!version.equals(change.getId())) {
-        down.operate(connectionProvider, migrationsLoader, printStream, option);
+        down.operate(connectionProvider, migrationsLoader, option, printStream);
         change = getLastAppliedChange(connectionProvider, option);
       }
     } else {
-      printStream.println("Already at version: " + version);
+      println(printStream, "Already at version: " + version);
     }
-    printStream.println();
+    println(printStream);
   }
 
   private void ensureVersionExists(MigrationsLoader migrationsLoader) {

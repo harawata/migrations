@@ -10,6 +10,6 @@ public final class PendingCommand extends BaseCommand {
 
   public void execute(String... params) {
     PendingOperation operation = new PendingOperation();
-    operation.operate(getConnectionProvider(), getMigrationsLoader(), printStream, getDatabaseOperationOption());
+    operation.operate(getConnectionProvider(), getMigrationsLoader(), getDatabaseOperationOption(), printStream);
   }
 }

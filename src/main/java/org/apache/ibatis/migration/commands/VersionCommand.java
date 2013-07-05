@@ -16,7 +16,7 @@ public final class VersionCommand extends BaseCommand {
     ensureNumericParam(params);
 
     VersionOperation operation = new VersionOperation(new BigDecimal(params[0]));
-    operation.operate(getConnectionProvider(), getMigrationsLoader(), printStream, getDatabaseOperationOption());
+    operation.operate(getConnectionProvider(), getMigrationsLoader(), getDatabaseOperationOption(), printStream);
   }
 
   private void ensureParamsPassed(String... params) {
