@@ -10,7 +10,7 @@ import org.apache.ibatis.migration.MigrationException;
 import org.apache.ibatis.migration.MigrationsLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
-public final class UpOperation extends DatabaseOperation {
+public final class UpOperation extends DatabaseOperation<UpOperation> {
   private final Integer steps;
 
   public UpOperation() {
@@ -21,10 +21,13 @@ public final class UpOperation extends DatabaseOperation {
   public UpOperation(Integer steps) {
     super();
     this.steps = steps;
+    if (steps != null && steps.intValue() < 1) {
+      throw new IllegalArgumentException("step must be positive number or null.");
+    }
   }
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public UpOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       Change lastChange = null;
       if (changelogExists(connectionProvider, option)) {
@@ -45,11 +48,12 @@ public final class UpOperation extends DatabaseOperation {
           insertChangelog(change, connectionProvider, option);
           println(printStream);
           stepCount++;
-          if (steps != null && stepCount > steps) {
+          if (steps != null && stepCount >= steps) {
             break;
           }
         }
       }
+      return this;
     } catch (Exception e) {
       throw new MigrationException("Error executing command.  Cause: " + e, e);
     }

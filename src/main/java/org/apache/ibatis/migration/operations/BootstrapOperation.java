@@ -9,8 +9,12 @@ import org.apache.ibatis.migration.MigrationException;
 import org.apache.ibatis.migration.MigrationsLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
-public final class BootstrapOperation extends DatabaseOperation {
+public final class BootstrapOperation extends DatabaseOperation<BootstrapOperation> {
   private final boolean force;
+
+  public BootstrapOperation() {
+    this(false);
+  }
 
   public BootstrapOperation(boolean force) {
     super();
@@ -18,7 +22,7 @@ public final class BootstrapOperation extends DatabaseOperation {
   }
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public BootstrapOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       if (changelogExists(connectionProvider, option) && !force) {
         println(printStream, "For your safety, the bootstrap SQL script will only run before migrations are applied (i.e. before the changelog exists).  If you're certain, you can run it using the --force option.");
@@ -37,6 +41,7 @@ public final class BootstrapOperation extends DatabaseOperation {
           println(printStream, "Error, could not run bootstrap.sql.  The file does not exist.");
         }
       }
+      return this;
     } catch (Exception e) {
       throw new MigrationException("Error running bootstrapper.  Cause: " + e, e);
     }

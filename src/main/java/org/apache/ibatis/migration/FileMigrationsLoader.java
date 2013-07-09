@@ -17,31 +17,33 @@ import java.util.Properties;
 import org.apache.ibatis.migration.utils.Util;
 
 public class FileMigrationsLoader implements MigrationsLoader {
-  private final File scriptPath;
+  private final File scriptsDir;
 
   private final String charset;
 
   private final Properties properties;
 
-  public FileMigrationsLoader(File scriptPath, String charset, Properties properties) {
+  public FileMigrationsLoader(File scriptsDir, String charset, Properties properties) {
     super();
-    this.scriptPath = scriptPath;
+    this.scriptsDir = scriptsDir;
     this.charset = charset;
     this.properties = properties;
   }
 
   @Override
   public List<Change> getMigrations() {
-    String[] filenames = scriptPath.list();
-    if (filenames == null) {
-      throw new MigrationException(scriptPath + " does not exist.");
-    }
-    Arrays.sort(filenames);
     List<Change> migrations = new ArrayList<Change>();
-    for (String filename : filenames) {
-      if (filename.endsWith(".sql") && !"bootstrap.sql".equals(filename)) {
-        Change change = parseChangeFromFilename(filename);
-        migrations.add(change);
+    if (scriptsDir.isDirectory()) {
+      String[] filenames = scriptsDir.list();
+      if (filenames == null) {
+        throw new MigrationException(scriptsDir + " does not exist.");
+      }
+      Arrays.sort(filenames);
+      for (String filename : filenames) {
+        if (filename.endsWith(".sql") && !"bootstrap.sql".equals(filename)) {
+          Change change = parseChangeFromFilename(filename);
+          migrations.add(change);
+        }
       }
     }
     return migrations;
@@ -70,7 +72,7 @@ public class FileMigrationsLoader implements MigrationsLoader {
   @Override
   public Reader getScriptReader(Change change, boolean undo) {
     try {
-      return new MigrationReader(scriptFileReader(Util.file(scriptPath, change.getFilename())), undo, properties);
+      return new MigrationReader(scriptFileReader(Util.file(scriptsDir, change.getFilename())), undo, properties);
     } catch (IOException e) {
       throw new MigrationException("Error reading " + change.getFilename(), e);
     }
@@ -79,7 +81,7 @@ public class FileMigrationsLoader implements MigrationsLoader {
   @Override
   public Reader getBootstrapReader() {
     try {
-      File bootstrap = Util.file(scriptPath, "bootstrap.sql");
+      File bootstrap = Util.file(scriptsDir, "bootstrap.sql");
       if (bootstrap.exists()) {
         return new MigrationReader(scriptFileReader(bootstrap), false, properties);
       }

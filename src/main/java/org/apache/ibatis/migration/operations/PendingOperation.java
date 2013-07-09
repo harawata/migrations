@@ -12,10 +12,10 @@ import org.apache.ibatis.migration.MigrationException;
 import org.apache.ibatis.migration.MigrationsLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
-public final class PendingOperation extends DatabaseOperation {
+public final class PendingOperation extends DatabaseOperation<PendingOperation> {
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public PendingOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       if (!changelogExists(connectionProvider, option)) {
         throw new MigrationException("Change log doesn't exist, no migrations applied.  Try running 'up' instead.");
@@ -33,6 +33,7 @@ public final class PendingOperation extends DatabaseOperation {
         insertChangelog(change, connectionProvider, option);
         println(printStream);
       }
+      return this;
     } catch (Exception e) {
       throw new MigrationException("Error executing command.  Cause: " + e, e);
     }

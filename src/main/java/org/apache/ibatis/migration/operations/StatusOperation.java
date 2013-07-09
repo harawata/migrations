@@ -10,7 +10,7 @@ import org.apache.ibatis.migration.ConnectionProvider;
 import org.apache.ibatis.migration.MigrationsLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
-public final class StatusOperation extends DatabaseOperation {
+public final class StatusOperation extends DatabaseOperation<StatusOperation> {
   private int applied;
 
   private int pending;
@@ -18,32 +18,33 @@ public final class StatusOperation extends DatabaseOperation {
   private List<Change> changes;
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public StatusOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     println(printStream, "ID             Applied At          Description");
     println(printStream, horizontalLine("", 80));
-    List<Change> merged = new ArrayList<Change>();
+    changes = new ArrayList<Change>();
     List<Change> migrations = migrationsLoader.getMigrations();
     if (changelogExists(connectionProvider, option)) {
       List<Change> changelog = getChangelog(connectionProvider, option);
       for (Change change : migrations) {
         int index = changelog.indexOf(change);
         if (index > -1) {
-          merged.add(changelog.get(index));
+          changes.add(changelog.get(index));
           applied++;
         } else {
-          merged.add(change);
+          changes.add(change);
           pending++;
         }
       }
-      Collections.sort(merged);
+      Collections.sort(changes);
     } else {
-      merged.addAll(migrations);
+      changes.addAll(migrations);
       pending = migrations.size();
     }
-    for (Change change : merged) {
+    for (Change change : changes) {
       println(printStream, change.toString());
     }
     println(printStream);
+    return this;
   }
 
   public int getAppliedCount() {

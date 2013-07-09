@@ -13,8 +13,12 @@ import org.apache.ibatis.migration.MigrationException;
 import org.apache.ibatis.migration.MigrationsLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
-public final class DownOperation extends DatabaseOperation {
+public final class DownOperation extends DatabaseOperation<DownOperation> {
   private Integer steps;
+
+  public DownOperation() {
+    this(null);
+  }
 
   public DownOperation(Integer steps) {
     super();
@@ -22,13 +26,14 @@ public final class DownOperation extends DatabaseOperation {
   }
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public DownOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       Change lastChange = getLastAppliedChange(connectionProvider, option);
       if (lastChange == null) {
         println(printStream, "Changelog exist, but no migration found.");
       } else {
         List<Change> migrations = migrationsLoader.getMigrations();
+        Collections.sort(migrations);
         Collections.reverse(migrations);
         int stepCount = 0;
         for (Change change : migrations) {
@@ -47,13 +52,14 @@ public final class DownOperation extends DatabaseOperation {
             }
             println(printStream);
             stepCount++;
-            if (steps == null || stepCount > steps) {
+            if (steps == null || stepCount >= steps) {
               break;
             }
             lastChange = getLastAppliedChange(connectionProvider, option);
           }
         }
       }
+      return this;
     } catch (Exception e) {
       throw new MigrationException("Error undoing last migration.  Cause: " + e, e);
     }

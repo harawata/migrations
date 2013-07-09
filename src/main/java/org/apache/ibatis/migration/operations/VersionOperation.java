@@ -10,7 +10,7 @@ import org.apache.ibatis.migration.MigrationException;
 import org.apache.ibatis.migration.MigrationsLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
-public final class VersionOperation extends DatabaseOperation {
+public final class VersionOperation extends DatabaseOperation<VersionOperation> {
   private BigDecimal version;
 
   public VersionOperation(BigDecimal version) {
@@ -22,7 +22,7 @@ public final class VersionOperation extends DatabaseOperation {
   }
 
   @Override
-  public void operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public VersionOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     ensureVersionExists(migrationsLoader);
     Change change = getLastAppliedChange(connectionProvider, option);
     if (change == null || version.compareTo(change.getId()) > 0) {
@@ -43,6 +43,7 @@ public final class VersionOperation extends DatabaseOperation {
       println(printStream, "Already at version: " + version);
     }
     println(printStream);
+    return this;
   }
 
   private void ensureVersionExists(MigrationsLoader migrationsLoader) {

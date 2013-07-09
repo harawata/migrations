@@ -7,33 +7,25 @@ import org.apache.ibatis.migration.operations.StatusOperation;
 import org.apache.ibatis.migration.options.SelectedOptions;
 
 public final class StatusCommand extends BaseCommand {
-  private int applied;
-
-  private int pending;
-
-  private List<Change> changes;
+  private StatusOperation operation;
 
   public StatusCommand(SelectedOptions options) {
     super(options);
   }
 
   public void execute(String... params) {
-    StatusOperation operation = new StatusOperation();
-    operation.operate(getConnectionProvider(), getMigrationsLoader(), getDatabaseOperationOption(), printStream);
-    applied = operation.getAppliedCount();
-    pending = operation.getPendingCount();
-    changes = operation.getCurrentStatus();
+    operation = new StatusOperation().operate(getConnectionProvider(), getMigrationsLoader(), getDatabaseOperationOption(), printStream);
   }
 
   public int getAppliedCount() {
-    return applied;
+    return operation.getAppliedCount();
   }
 
   public int getPendingCount() {
-    return pending;
+    return operation.getPendingCount();
   }
 
   public List<Change> getCurrentStatus() {
-    return changes;
+    return operation.getCurrentStatus();
   }
 }
