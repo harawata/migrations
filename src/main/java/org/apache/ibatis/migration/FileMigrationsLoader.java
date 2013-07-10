@@ -1,13 +1,8 @@
 package org.apache.ibatis.migration;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +67,7 @@ public class FileMigrationsLoader implements MigrationsLoader {
   @Override
   public Reader getScriptReader(Change change, boolean undo) {
     try {
-      return new MigrationReader(scriptFileReader(Util.file(scriptsDir, change.getFilename())), undo, properties);
+      return new MigrationReader(Util.file(scriptsDir, change.getFilename()), charset, undo, properties);
     } catch (IOException e) {
       throw new MigrationException("Error reading " + change.getFilename(), e);
     }
@@ -83,20 +78,11 @@ public class FileMigrationsLoader implements MigrationsLoader {
     try {
       File bootstrap = Util.file(scriptsDir, "bootstrap.sql");
       if (bootstrap.exists()) {
-        return new MigrationReader(scriptFileReader(bootstrap), false, properties);
+        return new MigrationReader(bootstrap, charset, false, properties);
       }
       return null;
     } catch (IOException e) {
       throw new MigrationException("Error reading bootstrap.sql", e);
-    }
-  }
-
-  protected Reader scriptFileReader(File scriptFile) throws FileNotFoundException, UnsupportedEncodingException {
-    InputStream inputStream = new FileInputStream(scriptFile);
-    if (charset == null || charset.length() == 0) {
-      return new InputStreamReader(inputStream);
-    } else {
-      return new InputStreamReader(inputStream, charset);
     }
   }
 }
