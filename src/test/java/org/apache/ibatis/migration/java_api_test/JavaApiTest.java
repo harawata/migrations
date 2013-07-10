@@ -69,12 +69,7 @@ public class JavaApiTest {
     new UpOperation(1).operate(connectionProvider, migrationsLoader, dbOption, new PrintStream(out));
 
     new BootstrapOperation().operate(connectionProvider, migrationsLoader, dbOption, new PrintStream(out));
-    try {
-      runQuery(connectionProvider, "select count(*) from bootstrap_table");
-      fail();
-    } catch (SQLException e) {
-      // expected
-    }
+    assertTableDoesNotExist(connectionProvider, "bootstrap_table");
   }
 
   @Test
@@ -95,12 +90,7 @@ public class JavaApiTest {
     new UpOperation(2).operate(connectionProvider, migrationsLoader, dbOption, new PrintStream(out));
     assertEquals("2", runQuery(connectionProvider, "select count(*) from changelog"));
     assertEquals("0", runQuery(connectionProvider, "select count(*) from first_table"));
-    try {
-      runQuery(connectionProvider, "select count(*) from second_table");
-      fail();
-    } catch (SQLException e) {
-      // expected
-    }
+    assertTableDoesNotExist(connectionProvider, "second_table");
   }
 
   @Test
@@ -110,12 +100,7 @@ public class JavaApiTest {
     new DownOperation().operate(connectionProvider, migrationsLoader, dbOption, new PrintStream(out));
     assertEquals("2", runQuery(connectionProvider, "select count(*) from changelog"));
     assertEquals("0", runQuery(connectionProvider, "select count(*) from first_table"));
-    try {
-      runQuery(connectionProvider, "select count(*) from second_table");
-      fail();
-    } catch (SQLException e) {
-      // expected
-    }
+    assertTableDoesNotExist(connectionProvider, "second_table");
   }
 
   @Test
@@ -124,18 +109,8 @@ public class JavaApiTest {
 
     new DownOperation(2).operate(connectionProvider, migrationsLoader, dbOption, new PrintStream(out));
     assertEquals("1", runQuery(connectionProvider, "select count(*) from changelog"));
-    try {
-      runQuery(connectionProvider, "select count(*) from first_table");
-      fail();
-    } catch (SQLException e) {
-      // expected
-    }
-    try {
-      runQuery(connectionProvider, "select count(*) from second_table");
-      fail();
-    } catch (SQLException e) {
-      // expected
-    }
+    assertTableDoesNotExist(connectionProvider, "first_table");
+    assertTableDoesNotExist(connectionProvider, "second_table");
   }
 
   @Test
@@ -158,12 +133,7 @@ public class JavaApiTest {
     new VersionOperation(new BigDecimal("20130707120738")).operate(connectionProvider, migrationsLoader, dbOption, new PrintStream(out));
     assertEquals("2", runQuery(connectionProvider, "select count(*) from changelog"));
     assertEquals("0", runQuery(connectionProvider, "select count(*) from first_table"));
-    try {
-      runQuery(connectionProvider, "select count(*) from second_table");
-      fail();
-    } catch (SQLException e) {
-      // expected
-    }
+    assertTableDoesNotExist(connectionProvider, "second_table");
   }
 
   @Test
@@ -173,8 +143,12 @@ public class JavaApiTest {
     new VersionOperation(new BigDecimal("20130707120738")).operate(connectionProvider, migrationsLoader, dbOption, new PrintStream(out));
     assertEquals("2", runQuery(connectionProvider, "select count(*) from changelog"));
     assertEquals("0", runQuery(connectionProvider, "select count(*) from first_table"));
+    assertTableDoesNotExist(connectionProvider, "second_table");
+  }
+
+  protected void assertTableDoesNotExist(ConnectionProvider connectionProvider, String table) throws Exception {
     try {
-      runQuery(connectionProvider, "select count(*) from second_table");
+      runQuery(connectionProvider, "select count(*) from " + table);
       fail();
     } catch (SQLException e) {
       // expected
