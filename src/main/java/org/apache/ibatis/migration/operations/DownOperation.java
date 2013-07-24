@@ -10,7 +10,7 @@ import org.apache.ibatis.jdbc.SqlRunner;
 import org.apache.ibatis.migration.Change;
 import org.apache.ibatis.migration.ConnectionProvider;
 import org.apache.ibatis.migration.MigrationException;
-import org.apache.ibatis.migration.MigrationsLoader;
+import org.apache.ibatis.migration.MigrationLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
 public final class DownOperation extends DatabaseOperation<DownOperation> {
@@ -26,7 +26,7 @@ public final class DownOperation extends DatabaseOperation<DownOperation> {
   }
 
   @Override
-  public DownOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public DownOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       Change lastChange = getLastAppliedChange(connectionProvider, option);
       if (lastChange == null) {

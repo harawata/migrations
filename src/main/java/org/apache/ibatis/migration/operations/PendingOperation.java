@@ -9,13 +9,13 @@ import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.migration.Change;
 import org.apache.ibatis.migration.ConnectionProvider;
 import org.apache.ibatis.migration.MigrationException;
-import org.apache.ibatis.migration.MigrationsLoader;
+import org.apache.ibatis.migration.MigrationLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
 public final class PendingOperation extends DatabaseOperation<PendingOperation> {
 
   @Override
-  public PendingOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public PendingOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       if (!changelogExists(connectionProvider, option)) {
         throw new MigrationException("Change log doesn't exist, no migrations applied.  Try running 'up' instead.");
@@ -39,7 +39,7 @@ public final class PendingOperation extends DatabaseOperation<PendingOperation> 
     }
   }
 
-  private List<Change> getPendingChanges(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option) {
+  private List<Change> getPendingChanges(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option) {
     List<Change> pending = new ArrayList<Change>();
     List<Change> migrations = migrationsLoader.getMigrations();
     List<Change> changelog = getChangelog(connectionProvider, option);

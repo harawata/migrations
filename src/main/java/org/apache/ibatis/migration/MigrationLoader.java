@@ -3,7 +3,7 @@ package org.apache.ibatis.migration;
 import java.io.Reader;
 import java.util.List;
 
-public interface MigrationsLoader {
+public interface MigrationLoader {
 
   /**
    * @return A list of migrations (bootstrap should NOT be included).

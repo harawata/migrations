@@ -6,7 +6,7 @@ import java.io.Reader;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.migration.ConnectionProvider;
 import org.apache.ibatis.migration.MigrationException;
-import org.apache.ibatis.migration.MigrationsLoader;
+import org.apache.ibatis.migration.MigrationLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
 public final class BootstrapOperation extends DatabaseOperation<BootstrapOperation> {
@@ -22,7 +22,7 @@ public final class BootstrapOperation extends DatabaseOperation<BootstrapOperati
   }
 
   @Override
-  public BootstrapOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public BootstrapOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
       if (changelogExists(connectionProvider, option) && !force) {
         println(printStream, "For your safety, the bootstrap SQL script will only run before migrations are applied (i.e. before the changelog exists).  If you're certain, you can run it using the --force option.");

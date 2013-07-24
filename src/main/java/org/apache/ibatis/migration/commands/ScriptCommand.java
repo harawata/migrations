@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 
 import org.apache.ibatis.migration.Change;
 import org.apache.ibatis.migration.MigrationException;
-import org.apache.ibatis.migration.MigrationsLoader;
+import org.apache.ibatis.migration.MigrationLoader;
 import org.apache.ibatis.migration.operations.DatabaseOperation;
 import org.apache.ibatis.migration.options.SelectedOptions;
 
@@ -32,7 +32,7 @@ public final class ScriptCommand extends BaseCommand {
       BigDecimal v1 = new BigDecimal(parser.nextToken());
       BigDecimal v2 = new BigDecimal(parser.nextToken());
       boolean undo = v1.compareTo(v2) > 0;
-      MigrationsLoader migrationsLoader = getMigrationsLoader();
+      MigrationLoader migrationsLoader = getMigrationsLoader();
       List<Change> migrations = migrationsLoader.getMigrations();
       Collections.sort(migrations);
       if (undo) {

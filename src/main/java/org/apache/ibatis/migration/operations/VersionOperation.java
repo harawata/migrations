@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.ibatis.migration.Change;
 import org.apache.ibatis.migration.ConnectionProvider;
 import org.apache.ibatis.migration.MigrationException;
-import org.apache.ibatis.migration.MigrationsLoader;
+import org.apache.ibatis.migration.MigrationLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
 public final class VersionOperation extends DatabaseOperation<VersionOperation> {
@@ -22,7 +22,7 @@ public final class VersionOperation extends DatabaseOperation<VersionOperation> 
   }
 
   @Override
-  public VersionOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public VersionOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     ensureVersionExists(migrationsLoader);
     Change change = getLastAppliedChange(connectionProvider, option);
     if (change == null || version.compareTo(change.getId()) > 0) {
@@ -46,7 +46,7 @@ public final class VersionOperation extends DatabaseOperation<VersionOperation> 
     return this;
   }
 
-  private void ensureVersionExists(MigrationsLoader migrationsLoader) {
+  private void ensureVersionExists(MigrationLoader migrationsLoader) {
     List<Change> migrations = migrationsLoader.getMigrations();
     if (!migrations.contains(new Change(version))) {
       throw new MigrationException("A migration for the specified version number does not exist.");

@@ -14,8 +14,8 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import org.apache.ibatis.migration.ConnectionProvider;
-import org.apache.ibatis.migration.FileMigrationsLoader;
-import org.apache.ibatis.migration.MigrationsLoader;
+import org.apache.ibatis.migration.FileMigrationLoader;
+import org.apache.ibatis.migration.MigrationLoader;
 import org.apache.ibatis.migration.operations.BootstrapOperation;
 import org.apache.ibatis.migration.operations.DownOperation;
 import org.apache.ibatis.migration.operations.PendingOperation;
@@ -35,7 +35,7 @@ public class JavaApiTest {
 
   private ByteArrayOutputStream out;
 
-  private MigrationsLoader migrationsLoader;
+  private MigrationLoader migrationsLoader;
 
   @Before
   public void setup() throws Exception {
@@ -155,12 +155,12 @@ public class JavaApiTest {
     }
   }
 
-  protected FileMigrationsLoader createMigrationsLoader() {
+  protected FileMigrationLoader createMigrationsLoader() {
     URL url = getClass().getClassLoader().getResource("org/apache/ibatis/migration/java_api_test/scripts");
     File scriptsDir = new File(url.getFile());
     Properties properties = new Properties();
     properties.setProperty("changelog", "CHANGELOG");
-    FileMigrationsLoader migrationsLoader = new FileMigrationsLoader(scriptsDir, "utf-8", properties);
+    FileMigrationLoader migrationsLoader = new FileMigrationLoader(scriptsDir, "utf-8", properties);
     return migrationsLoader;
   }
 

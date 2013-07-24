@@ -11,14 +11,14 @@ import java.util.Properties;
 
 import org.apache.ibatis.migration.utils.Util;
 
-public class FileMigrationsLoader implements MigrationsLoader {
+public class FileMigrationLoader implements MigrationLoader {
   private final File scriptsDir;
 
   private final String charset;
 
   private final Properties properties;
 
-  public FileMigrationsLoader(File scriptsDir, String charset, Properties properties) {
+  public FileMigrationLoader(File scriptsDir, String charset, Properties properties) {
     super();
     this.scriptsDir = scriptsDir;
     this.charset = charset;

@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.apache.ibatis.migration.Change;
 import org.apache.ibatis.migration.ConnectionProvider;
-import org.apache.ibatis.migration.MigrationsLoader;
+import org.apache.ibatis.migration.MigrationLoader;
 import org.apache.ibatis.migration.options.DatabaseOperationOption;
 
 public final class StatusOperation extends DatabaseOperation<StatusOperation> {
@@ -18,7 +18,7 @@ public final class StatusOperation extends DatabaseOperation<StatusOperation> {
   private List<Change> changes;
 
   @Override
-  public StatusOperation operate(ConnectionProvider connectionProvider, MigrationsLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+  public StatusOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     println(printStream, "ID             Applied At          Description");
     println(printStream, horizontalLine("", 80));
     changes = new ArrayList<Change>();
