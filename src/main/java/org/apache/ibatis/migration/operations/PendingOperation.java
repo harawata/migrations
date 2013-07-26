@@ -17,6 +17,9 @@ public final class PendingOperation extends DatabaseOperation<PendingOperation> 
   @Override
   public PendingOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
+      if (option == null) {
+        option = new DatabaseOperationOption();
+      }
       if (!changelogExists(connectionProvider, option)) {
         throw new MigrationException("Change log doesn't exist, no migrations applied.  Try running 'up' instead.");
       }

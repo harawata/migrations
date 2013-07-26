@@ -24,6 +24,9 @@ public final class BootstrapOperation extends DatabaseOperation<BootstrapOperati
   @Override
   public BootstrapOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
+      if (option == null) {
+        option = new DatabaseOperationOption();
+      }
       if (changelogExists(connectionProvider, option) && !force) {
         println(printStream, "For your safety, the bootstrap SQL script will only run before migrations are applied (i.e. before the changelog exists).  If you're certain, you can run it using the --force option.");
       } else {

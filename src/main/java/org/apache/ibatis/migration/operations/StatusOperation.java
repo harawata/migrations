@@ -19,6 +19,9 @@ public final class StatusOperation extends DatabaseOperation<StatusOperation> {
 
   @Override
   public StatusOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+    if (option == null) {
+      option = new DatabaseOperationOption();
+    }
     println(printStream, "ID             Applied At          Description");
     println(printStream, horizontalLine("", 80));
     changes = new ArrayList<Change>();

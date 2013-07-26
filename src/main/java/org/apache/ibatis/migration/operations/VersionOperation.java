@@ -23,6 +23,9 @@ public final class VersionOperation extends DatabaseOperation<VersionOperation> 
 
   @Override
   public VersionOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
+    if (option == null) {
+      option = new DatabaseOperationOption();
+    }
     ensureVersionExists(migrationsLoader);
     Change change = getLastAppliedChange(connectionProvider, option);
     if (change == null || version.compareTo(change.getId()) > 0) {

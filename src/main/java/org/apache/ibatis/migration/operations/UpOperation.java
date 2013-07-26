@@ -29,6 +29,10 @@ public final class UpOperation extends DatabaseOperation<UpOperation> {
   @Override
   public UpOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
+      if (option == null) {
+        option = new DatabaseOperationOption();
+      }
+
       Change lastChange = null;
       if (changelogExists(connectionProvider, option)) {
         lastChange = getLastAppliedChange(connectionProvider, option);

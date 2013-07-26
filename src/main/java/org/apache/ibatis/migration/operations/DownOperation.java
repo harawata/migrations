@@ -28,6 +28,9 @@ public final class DownOperation extends DatabaseOperation<DownOperation> {
   @Override
   public DownOperation operate(ConnectionProvider connectionProvider, MigrationLoader migrationsLoader, DatabaseOperationOption option, PrintStream printStream) {
     try {
+      if (option == null) {
+        option = new DatabaseOperationOption();
+      }
       Change lastChange = getLastAppliedChange(connectionProvider, option);
       if (lastChange == null) {
         println(printStream, "Changelog exist, but no migration found.");
