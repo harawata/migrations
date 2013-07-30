@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import org.apache.ibatis.migration.ConnectionProvider;
 import org.apache.ibatis.migration.FileMigrationLoader;
+import org.apache.ibatis.migration.JdbcConnectionProvider;
 import org.apache.ibatis.migration.MigrationLoader;
 import org.apache.ibatis.migration.operations.BootstrapOperation;
 import org.apache.ibatis.migration.operations.DownOperation;

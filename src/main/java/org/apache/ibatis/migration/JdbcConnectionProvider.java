@@ -1,10 +1,8 @@
-package org.apache.ibatis.migration.java_api_test;
+package org.apache.ibatis.migration;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-import org.apache.ibatis.migration.ConnectionProvider;
 
 public class JdbcConnectionProvider implements ConnectionProvider {
 
