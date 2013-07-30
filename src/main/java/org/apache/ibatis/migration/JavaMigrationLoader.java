@@ -2,6 +2,7 @@ package org.apache.ibatis.migration;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -33,9 +34,11 @@ public class JavaMigrationLoader implements MigrationLoader {
     Set<Class<? extends MigrationScript>> classes = resolver.getClasses();
     for (Class<? extends MigrationScript> clazz : classes) {
       try {
-        MigrationScript script = clazz.newInstance();
-        Change change = parseChangeFromMigrationScript(script);
-        migrations.add(change);
+        if (!Modifier.isAbstract(clazz.getModifiers())) {
+          MigrationScript script = clazz.newInstance();
+          Change change = parseChangeFromMigrationScript(script);
+          migrations.add(change);
+        }
       } catch (Exception e) {
         throw new MigrationException("Could not instanciate MigrationScript: " + clazz.getName(), e);
       }
